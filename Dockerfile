@@ -2,6 +2,8 @@ FROM tomcat:9
 
 MAINTAINER juliens@microsoft.com
 
+
+RUN  echo "IdentityFile ~/.ssh/id_rsa" >> /etc/ssh/ssh_config
 #need to add steps to build the war file from the source code
 # Gradle
 #https://github.com/niaquinto/docker-gradle/blob/master/Dockerfile

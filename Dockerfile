@@ -24,7 +24,8 @@ ENV PATH $PATH:$GRADLE_HOME/bin
 
 
 ADD . /client
-RUN cd /client && gradle build && dir && mv build/libs/* /usr/local/tomcat/webapps/
+#RUN cd /client && gradle build && dir && mv build/libs/* /usr/local/tomcat/webapps/
+CMD cd /client && gradle build && dir && mv build/libs/* /usr/local/tomcat/webapps/
 
 #RUN dir /usr/local/tomcat/webapps/
 

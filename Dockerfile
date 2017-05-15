@@ -30,7 +30,7 @@ MAINTAINER juliens@microsoft.com
 #WORKDIR /client
 #ENTRYPOINT catalina.sh run
 RUN cd /usr/local/tomcat/webapps/ && dir
-CMD ["catalina.sh" , "run"]
+CMD whoami
 
 EXPOSE 8080
 #FROM gliderlabs/alpine:3.4

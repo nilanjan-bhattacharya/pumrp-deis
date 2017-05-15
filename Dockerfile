@@ -36,13 +36,10 @@
 #CMD catalina.sh run
 
 #EXPOSE 8080
+FROM gliderlabs/alpine:3.4
 
-FROM python:3.5.1-alpine
-
-COPY . /app
+RUN apk-install python
+ADD . /app
 WORKDIR /app
-
-RUN pip install -r requirements.txt
-
-EXPOSE 8000
-CMD ["mkdocs", "serve", "-a", "0.0.0.0:8000"]
+CMD python -m SimpleHTTPServer 5000
+EXPOSE 5000

@@ -18,11 +18,12 @@ RUN apk add --update curl &&\
   ln -s /opt/apache-tomcat-${TOMCAT_VERSION_FULL} /opt/tomcat &&\
   rm -rf /opt/tomcat/webapps/examples /opt/tomcat/webapps/docs &&\
   apk del curl &&\
-  rm -rf /var/cache/apk/*
+  rm -rf /var/cache/apk/* &&\
+  sed -i 's/52428800/5242880000/g' /opt/tomcat/webapps/manager/WEB-INF/web.xml 
 
 # Configuration
-ADD tomcat-users.xml /opt/tomcat/conf/
-RUN sed -i 's/52428800/5242880000/g' /opt/tomcat/webapps/manager/WEB-INF/web.xml 
+#ADD tomcat-users.xml /opt/tomcat/conf/
+#RUN sed -i 's/52428800/5242880000/g' /opt/tomcat/webapps/manager/WEB-INF/web.xml 
 
 # Set environment
 ENV CATALINA_HOME /opt/tomcat

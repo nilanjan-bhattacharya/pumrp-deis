@@ -1,33 +1,31 @@
-FROM tomcat:9
+FROM jeanblanchard/java:8
+MAINTAINER Jean Blanchard <jean@blanchard.io>
 
-MAINTAINER juliens@microsoft.com
-
-#need to add steps to build the war file from the source code
-# Gradle
-#https://github.com/niaquinto/docker-gradle/blob/master/Dockerfile
-
-ENV GRADLE_VERSION 3.3
-ENV GRADLE_SHA c58650c278d8cf0696cab65108ae3c8d95eea9c1938e0eb8b997095d5ca9a292
-
-RUN cd /usr/lib \
- && curl -fl https://downloads.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -o gradle-bin.zip \
- && echo "$GRADLE_SHA gradle-bin.zip" | sha256sum -c - \
- && unzip "gradle-bin.zip" \
- && ln -s "/usr/lib/gradle-${GRADLE_VERSION}/bin/gradle" /usr/bin/gradle \
- && rm "gradle-bin.zip"
-
-# Set Appropriate Environmental Variables
-ENV GRADLE_HOME /usr/lib/gradle
-ENV PATH $PATH:$GRADLE_HOME/bin
-
-
-ADD . /client
-RUN cd /client && gradle build && dir && mv build/libs/* /usr/local/tomcat/webapps/ && cd /usr/local/tomcat/webapps/ && dir
-
-#RUN dir /usr/local/tomcat/webapps/
-
-#COPY .Web/build/libs/* /usr/local/tomcat/webapps/
-
+# Expose web port
 EXPOSE 8080
 
-ENTRYPOINT catalina.sh run
+# Tomcat Version
+ENV TOMCAT_VERSION_MAJOR 8
+ENV TOMCAT_VERSION_FULL  8.5.14
+
+# Download and install
+RUN apk add --update curl &&\
+  curl -LO https://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_VERSION_MAJOR}/v${TOMCAT_VERSION_FULL}/bin/apache-tomcat-${TOMCAT_VERSION_FULL}.tar.gz &&\
+  curl -LO https://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_VERSION_MAJOR}/v${TOMCAT_VERSION_FULL}/bin/apache-tomcat-${TOMCAT_VERSION_FULL}.tar.gz.md5 &&\
+  md5sum -c apache-tomcat-${TOMCAT_VERSION_FULL}.tar.gz.md5 &&\
+  gunzip -c apache-tomcat-${TOMCAT_VERSION_FULL}.tar.gz | tar -xf - -C /opt &&\
+  rm -f apache-tomcat-${TOMCAT_VERSION_FULL}.tar.gz apache-tomcat-${TOMCAT_VERSION_FULL}.tar.gz.md5 &&\
+  ln -s /opt/apache-tomcat-${TOMCAT_VERSION_FULL} /opt/tomcat &&\
+  rm -rf /opt/tomcat/webapps/examples /opt/tomcat/webapps/docs &&\
+  apk del curl &&\
+  rm -rf /var/cache/apk/*
+
+# Configuration
+ADD tomcat-users.xml /opt/tomcat/conf/
+RUN sed -i 's/52428800/5242880000/g' /opt/tomcat/webapps/manager/WEB-INF/web.xml 
+
+# Set environment
+ENV CATALINA_HOME /opt/tomcat
+
+# Launch Tomcat on startup
+CMD ${CATALINA_HOME}/bin/catalina.sh run

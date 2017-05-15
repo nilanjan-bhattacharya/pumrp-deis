@@ -31,7 +31,8 @@ RUN cd /client && gradle build && dir && mv build/libs/* /usr/local/tomcat/webap
 
 #COPY .Web/build/libs/* /usr/local/tomcat/webapps/
 
-EXPOSE 8080
-
+WORKDIR /client
 #ENTRYPOINT catalina.sh run
-CMD ["catalina.sh", "run"]
+CMD catalina.sh run
+
+EXPOSE 8080

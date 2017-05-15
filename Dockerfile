@@ -33,5 +33,5 @@ RUN cd /client && gradle build && dir && mv build/libs/* /usr/local/tomcat/webap
 
 EXPOSE 8080
 
-ENTRYPOINT catalina.sh run
-CMD catalina.sh run
+#ENTRYPOINT catalina.sh run
+CMD ["catalina.sh", "run"]
